@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">UseMongoDB</string>
+    <string name="signup">SignUp</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">LogIn</string>
+    <string name="don_t_have_account">don\'t have account?</string>
+    <string name="already_account">Already account?</string>
+    <string name="logout">LogOut</string>
+    <string name="fetch">Fetch User</string>
+    <string name="profile">Profile</string>
+    <string name="image">Image Upload</string>
+
+</resources>
