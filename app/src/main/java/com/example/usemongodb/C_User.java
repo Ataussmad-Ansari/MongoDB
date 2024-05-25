@@ -1,20 +1,23 @@
 package com.example.usemongodb;
 
 public class C_User {
-    private String name;
-    private String email;
-    // Add other fields and corresponding getters and setters
+    String name, email;
+
+    public C_User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 
     public String getName() {
         return name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setEmail(String email) {

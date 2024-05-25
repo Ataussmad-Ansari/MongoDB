@@ -57,14 +57,14 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<C_User>() {
             @Override
             public void onResponse(Call<C_User> call, Response<C_User> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    C_User user = response.body();
-                    binding.toolBar.setTitle(user.getName());
-                    binding.toolBar.setSubtitle(user.getEmail());
+                if (response.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "User details fetched successfully", Toast.LENGTH_SHORT).show();
+                    //user name and email show in toolbar
                 } else {
-                    Toast.makeText(MainActivity.this, "Failed to fetch user details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Failed to fetch user details: "+response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
+
 
             @Override
             public void onFailure(Call<C_User> call, Throwable t) {

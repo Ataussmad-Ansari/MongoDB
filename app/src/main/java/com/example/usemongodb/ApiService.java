@@ -14,9 +14,8 @@ public interface ApiService {
 
     @POST("/login")
     Call<Void> loginUser(@Body LoginUser loginUser);
+
     @GET("/current-user")
     Call<C_User> getCurrentUser();
-    @GET("/photos")
-    Call<ArrayList<ImgModel>> getPhotos();
 }
 
