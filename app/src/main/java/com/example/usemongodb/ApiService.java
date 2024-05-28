@@ -13,9 +13,6 @@ public interface ApiService {
     Call<Void> registerUser(@Body User user);
 
     @POST("/login")
-    Call<Void> loginUser(@Body LoginUser loginUser);
+    Call<User> loginUser(@Body LoginUser loginUser);
 
-    @GET("/current-user")
-    Call<C_User> getCurrentUser();
 }
-
