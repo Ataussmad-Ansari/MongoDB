@@ -1,6 +1,7 @@
 [versions]
 agp = "8.4.1"
 comAndroidToolsDesugar_jdk_libs4 = "2.0.4"
+glide = "4.16.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -9,12 +10,14 @@ appcompat = "1.6.1"
 material = "1.12.0"
 constraintlayout = "2.1.4"
 mongodbDriverSync = "5.1.0"
+pagingRuntime = "3.3.0"
 squareupOkhttp = "4.12.0"
 volley = "1.2.1"
 
 [libraries]
 com-android-tools-desugar_jdk_libs5 = { module = "com.android.tools:desugar_jdk_libs", version.ref = "comAndroidToolsDesugar_jdk_libs4" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -22,6 +25,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 mongodb-driver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongodbDriverSync" }
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
 squareup-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "squareupOkhttp" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }

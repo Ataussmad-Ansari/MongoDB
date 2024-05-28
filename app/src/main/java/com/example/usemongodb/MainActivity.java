@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,8 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.usemongodb.databinding.ActivityMainBinding;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,17 +36,15 @@ public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
     private String name, email;
 
+    CategoryAdapter adapter;
+    ArrayList<Category_Model> categoryModels = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return WindowInsetsCompat.CONSUMED;
-        });
 
         sharedPreferences = getSharedPreferences("MyAppName", MODE_PRIVATE);
 
@@ -59,13 +63,79 @@ public class MainActivity extends AppCompatActivity {
             name = sharedPreferences.getString("name", "Guest");
             email = sharedPreferences.getString("email", "No Email");
         }
+        binding.profile.setOnClickListener(v -> {
+            userData();
+        });
 
-        setSupportActionBar(binding.toolBar);
-        binding.toolBar.setTitle(name);
-        binding.toolBar.setSubtitle(email);
+        binding.menu.setOnClickListener(v -> {
+            binding.slider.setVisibility(View.VISIBLE);
+        });
+        binding.closeSlider.setOnClickListener(v -> {
+            binding.slider.setVisibility(View.GONE);
+        });
+        binding.logout.setOnClickListener(v -> {
+            logout();
+        });
+        binding.userData.setOnClickListener(v -> {
+            userData();
+        });
+
+
+        getCategories();
+
+        select_nav_item();
 
     }
 
+    private void getCategories() {
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL);
+        binding.catRV.setLayoutManager(staggeredGridLayoutManager);
+        categoryModels.add(new Category_Model("Fast food", R.drawable.burger));
+        categoryModels.add(new Category_Model("Fruit item", R.drawable.banana));
+        categoryModels.add(new Category_Model("Vegetable", R.drawable.burger));
+        categoryModels.add(new Category_Model("Drink", R.drawable.drink));
+        categoryModels.add(new Category_Model("Meat", R.drawable.meat));
+        adapter = new CategoryAdapter(this, categoryModels);
+        binding.catRV.setAdapter(adapter);
+    }
+
+    private void select_nav_item() {
+        binding.home.setOnClickListener(v -> {
+            binding.menus.setBackground(null);
+            binding.cart.setBackground(null);
+            binding.bookmark.setBackground(null);
+            binding.bell.setBackground(null);
+            binding.home.setBackgroundResource(R.drawable.nav_sel_bg);
+        });
+        binding.menus.setOnClickListener(v -> {
+            binding.home.setBackground(null);
+            binding.cart.setBackground(null);
+            binding.bookmark.setBackground(null);
+            binding.bell.setBackground(null);
+            binding.menus.setBackgroundResource(R.drawable.nav_sel_bg);
+        });
+        binding.cart.setOnClickListener(v -> {
+            binding.home.setBackground(null);
+            binding.menus.setBackground(null);
+            binding.bookmark.setBackground(null);
+            binding.bell.setBackground(null);
+            binding.cart.setBackgroundResource(R.drawable.nav_sel_bg);
+        });
+        binding.bookmark.setOnClickListener(v -> {
+            binding.home.setBackground(null);
+            binding.cart.setBackground(null);
+            binding.menus.setBackground(null);
+            binding.bell.setBackground(null);
+            binding.bookmark.setBackgroundResource(R.drawable.nav_sel_bg);
+        });
+        binding.bell.setOnClickListener(v -> {
+            binding.home.setBackground(null);
+            binding.cart.setBackground(null);
+            binding.bookmark.setBackground(null);
+            binding.menus.setBackground(null);
+            binding.bell.setBackgroundResource(R.drawable.nav_sel_bg);
+        });
+    }
 
     private void showToast(String message) {
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -91,24 +161,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        int id = item.getItemId();
-        if (id == R.id.fetch) {
-            // Handle settings action
-            userData();
-            return true ;
-        } else if (id == R.id.logOut) {
-            logout();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
