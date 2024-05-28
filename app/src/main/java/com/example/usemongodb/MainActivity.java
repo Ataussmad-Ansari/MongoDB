@@ -1,22 +1,22 @@
 package com.example.usemongodb;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.usemongodb.databinding.ActivityMainBinding;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,53 +26,69 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    ApiService apiService;
+    private SharedPreferences sharedPreferences;
+    private ApiService apiService;
+    private String name, email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+            return WindowInsetsCompat.CONSUMED;
         });
-        // Initializing Retrofit and ApiService
+
+        sharedPreferences = getSharedPreferences("MyAppName", MODE_PRIVATE);
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://backend-skr0.onrender.com") // Replace with your backend URL
+                .baseUrl("https://backend-skr0.onrender.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         apiService = retrofit.create(ApiService.class);
 
+        // Get user details from Intent or SharedPreferences
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
+        email = intent.getStringExtra("email");
+
+        if (name == null || email == null) {
+            name = sharedPreferences.getString("name", "Guest");
+            email = sharedPreferences.getString("email", "No Email");
+        }
 
         setSupportActionBar(binding.toolBar);
+        binding.toolBar.setTitle(name);
+        binding.toolBar.setSubtitle(email);
 
-        fetchCurrentUserDetails();
     }
 
-    private void fetchCurrentUserDetails() {
-        Call<C_User> call = apiService.getCurrentUser();
-        call.enqueue(new Callback<C_User>() {
-            @Override
-            public void onResponse(Call<C_User> call, Response<C_User> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "User details fetched successfully", Toast.LENGTH_SHORT).show();
-                    //user name and email show in toolbar
-                } else {
-                    Toast.makeText(MainActivity.this, "Failed to fetch user details: "+response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
 
-
-            @Override
-            public void onFailure(Call<C_User> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void showToast(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private void logout() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void userData() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("User Details");
+        builder.setMessage("Name: " + name + "\nEmail: " + email);
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
 
 
     @Override
@@ -87,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.fetch) {
             // Handle settings action
-            return true;
+            userData();
+            return true ;
         } else if (id == R.id.logOut) {
-            // Handle about action
-//            logout();
+            logout();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -4,12 +4,14 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     String name, email, pass;
     ApiService apiService;
     ActivityLoginBinding binding;
-
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,12 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        sharedPreferences = getSharedPreferences("MyAppName", MODE_PRIVATE);
+
+        if (sharedPreferences.getString("logged", "false").equals("true")) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
 
         // Use HTTP for local testing. Ensure the backend server is accessible from the Android device.
         Retrofit retrofit = RetrofitClient.getClient("https://backend-skr0.onrender.com");
@@ -91,13 +99,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void loginUser(LoginUser loginUser) {
+    /*private void loginUser(LoginUser loginUser) {
         Call<Void> call = apiService.loginUser(loginUser);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "User logged in successfully", Toast.LENGTH_SHORT).show();
+                    Void b = response.body();
+
+                    Toast.makeText(LoginActivity.this, "User logged in successfully "+b, Toast.LENGTH_SHORT).show();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("logged", "true");
+                    editor.putString("name", name);
+                    editor.putString("email", email);
+                    editor.apply();
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -119,7 +134,45 @@ public class LoginActivity extends AppCompatActivity {
                 binding.loginPassword.setText("");
             }
         });
+    }*/
+
+    private void loginUser(LoginUser loginUser) {
+        Call<User> call = apiService.loginUser(loginUser);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("logged", "true");
+                    editor.putString("name", user.getName());
+                    editor.putString("email", user.getEmail());
+                    editor.apply();
+
+                    Toast.makeText(LoginActivity.this, "User logged in successfully", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("name", user.getName());
+                    intent.putExtra("email", user.getEmail());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login failed: " + response.message(), Toast.LENGTH_SHORT).show();
+                    binding.loginEmail.setText("");
+                    binding.loginPassword.setText("");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e("LoginError", "onFailure: " + t.getMessage());
+                Toast.makeText(LoginActivity.this, "onFailure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.loginEmail.setText("");
+                binding.loginPassword.setText("");
+            }
+        });
     }
+
 
     private void registerUser(User user) {
         Call<Void> call = apiService.registerUser(user);
