@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginEnd="5dp"
     android:padding="8dp"
+    android:background="@drawable/search_bg"
     android:gravity="center"
     android:orientation="horizontal">
 
@@ -26,4 +27,3 @@
         android:text="cat_name"/>
 
 </LinearLayout>
-
