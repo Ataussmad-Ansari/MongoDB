@@ -49,6 +49,7 @@ dependencies {
     implementation (libs.mongodb.driver.sync) {
         exclude group: 'org.mongodb', module: 'bson-record-codec'
     }
+    implementation libs.activity
     coreLibraryDesugaring libs.com.android.tools.desugar.jdk.libs5
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

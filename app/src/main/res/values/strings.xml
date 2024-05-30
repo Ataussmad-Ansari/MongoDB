@@ -13,5 +13,6 @@
     <string name="image">Image Upload</string>
     <string name="search_food">Search food...</string>
     <string name="let_s_eat_nquality_food">Let\'s eat\nQuality food 😋</string>
+    <string name="fire">&#128293;</string>
 
 </resources>
